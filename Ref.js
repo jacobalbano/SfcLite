@@ -7,7 +7,7 @@ export class Ref {
 	}
 
 	set(value) {
-		if (this.get() === this.#value) return;
+		if (this.get() === value) return;
 		this.#value = value;
 		for (const h of this.#handlers)
 			h(value);

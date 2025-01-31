@@ -14,7 +14,10 @@ export default function sfcLite(source, globals = {}) {
 
 	if (style != null) {
 		const styleEl = style.cloneNode(true);
-		styleEl.id = `sfcLite_${++styleId}_${hashCode(source)}`;
+		if (!style.id)
+			styleEl.id = `sfcLite_${++styleId}_${hashCode(source)}`;
+
+		styleEl.innerText += `\n/*# sourceURL=${style.id}.css */`;
 		document.head.appendChild(styleEl);
 	}
 
@@ -30,7 +33,14 @@ function makeFunction(script, globalKeys) {
 	if (!script) return dummy;
 
 	const paramNames = ['data', ...globalKeys];
-	return new (script.async ? AsyncFunction : Function)(...paramNames, script.innerText);
+	if (!script.id)
+		script.id = `scflite_${scriptId++}_hashCode(${script.innerText})`;
+
+	script.innerText += `\n//# sourceURL=${script.id}.js`;
+	return new (script.async ? AsyncFunction : Function)(
+		...paramNames,
+		script.innerText
+	);
 }
 
 // eslint-disable-next-line no-empty-function
@@ -38,3 +48,4 @@ const AsyncFunction = Object.getPrototypeOf(async function(){}).constructor;
 const dummy = () => null;
 const hashCode = (str) => [...str].reduce((s, c) => Math.imul(31, s) + c.charCodeAt(0) | 0, 0);
 let styleId = 0;
+let scriptId = 0;
