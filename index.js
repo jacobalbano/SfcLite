@@ -34,7 +34,7 @@ function makeFunction(script, globalKeys) {
 
 	const paramNames = ['data', ...globalKeys];
 	if (!script.id)
-		script.id = `scflite_${scriptId++}_hashCode(${script.innerText})`;
+		script.id = `scflite_${scriptId++}_${hashCode(script.innerText)}`;
 
 	script.innerText += `\n//# sourceURL=${script.id}.js`;
 	return new (script.async ? AsyncFunction : Function)(
